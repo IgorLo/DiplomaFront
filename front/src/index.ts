@@ -1,1 +1,3 @@
+import "./views/App.tsx"
+
 

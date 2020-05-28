@@ -23,8 +23,12 @@
     "url-loader": "^4.0.0"
   },
   "dependencies": {
+    "@ant-design/icons": "^4.1.0",
+    "@types/react-router-dom": "^5.1.5",
     "@types/react-toast-notifications": "^2.4.0",
+    "antd": "^4.2.5",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "react-router-dom": "^5.2.0"
   }
 }

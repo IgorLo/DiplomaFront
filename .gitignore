@@ -1,0 +1,4 @@
+# Project exclude paths
+/front/node_modules/
+/front/server/node_modules/
+/front/src/index.d.ts
