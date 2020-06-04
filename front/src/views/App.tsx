@@ -9,6 +9,7 @@ import {
 import './App.css';
 import Students from "./Students";
 import Sets from "./Sets";
+import PlanTasks from "./PlanTasks";
 
 const App = () => {
 
@@ -24,9 +25,6 @@ const App = () => {
                             <Link to="/teachers">Преподаватели</Link>
                         </li>
                         <li>
-                            <Link to="/students">Студенты</Link>
-                        </li>
-                        <li>
                             <Link to="/sets">Множества</Link>
                         </li>
                     </ul>
@@ -37,9 +35,6 @@ const App = () => {
                 <Switch>
                     <Route path="/teachers">
                         <Teachers />
-                    </Route>
-                    <Route path="/students">
-                        <Students/>
                     </Route>
                     <Route path="/sets">
                         <Sets/>
@@ -55,7 +50,7 @@ const App = () => {
 };
 
 function Main() {
-    return <h2>Главная страница</h2>;
+    return <PlanTasks/>;
 }
 
 function Teachers() {

@@ -9,7 +9,7 @@ import createNewSet = entities.createNewSet;
 
 const {Search} = Input;
 
-const NewSetModal = (props: any) => {
+const TeacherTaskModal = (props: any) => {
 
     const [groups, setGroups] = useState(new Array<any>())
     const [expandedKeys, setExpandedKeys] = useState<number[]>([]);
@@ -119,4 +119,4 @@ const NewSetModal = (props: any) => {
 
 }
 
-export default NewSetModal
+export default TeacherTaskModal

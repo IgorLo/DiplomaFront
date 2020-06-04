@@ -8,6 +8,10 @@ app.get("/app.bundle.js", function (req, res) {
     res.sendFile('app.bundle.js', {root: root})
 });
 
+app.get("/index.css", function (req, res) {
+    res.sendFile('index.css', {root: root})
+});
+
 app.get("/*", function (req, res) {
     res.sendFile('index.html', {root: root})
 });

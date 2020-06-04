@@ -50,7 +50,7 @@ export module http {
         );
     }
 
-    export function contentOfPostRequest(url: string, parameters: FormData, withCredentials : boolean, handler: Function) {
+    export function contentOfPostRequest(url: string, parameters: any, withCredentials : boolean, handler: Function) {
         postRequest(url, parameters, withCredentials)
             .then(response => {
                 handler(response);

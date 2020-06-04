@@ -94,8 +94,12 @@ const Sets = () => {
                 footer={null}
                 centered
                 closable={false}
+                width={800}
                 >
-                <NewSetModal/>
+                <NewSetModal
+                    setVisible={setModalVisible}
+                    update={() => allSets(handleStudentSets)}
+                />
             </Modal>
         </div>
     )
