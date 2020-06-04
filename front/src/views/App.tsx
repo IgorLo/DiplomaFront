@@ -10,6 +10,7 @@ import './App.css';
 import Students from "./Students";
 import Sets from "./Sets";
 import PlanTasks from "./PlanTasks";
+import Teachers from "./Teachers";
 
 const App = () => {
 
@@ -51,10 +52,6 @@ const App = () => {
 
 function Main() {
     return <PlanTasks/>;
-}
-
-function Teachers() {
-    return <h2>Преподаватели</h2>;
 }
 
 ReactDOM.render(<App/>, document.getElementById("root"))

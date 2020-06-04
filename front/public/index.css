@@ -1,5 +1,9 @@
 
 .task_without_teacher {
-    background: #fff1f1;
+    background: #ffe2e2;
     border: 1px solid black;
+}
+
+.teacherCurrentBar {
+    height: 30px;
 }

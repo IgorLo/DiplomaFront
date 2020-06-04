@@ -139,6 +139,10 @@ export module entities {
         contentOfGetRequest("/tasks", false, handler)
     }
 
+    export function allTeachers(handler: Function) {
+        contentOfGetRequest("/teachers", false, handler)
+    }
+
     export function createNewSet(name: string, studentIds: Array<number>, handler: Function) {
         let data = {
             name: name,
