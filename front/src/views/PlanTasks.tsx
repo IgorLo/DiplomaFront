@@ -1,13 +1,15 @@
 import * as React from "react";
 import {useEffect, useState} from 'react';
 import {entities} from "../common/entities";
-import {Table, Modal, Button} from "antd"
+import {Table, Modal, Button, Space} from "antd"
 import PlanTask = entities.PlanTask;
 import allPlanTasks = entities.allPlanTasks;
 import "./PlanTasks.css"
 import {utils} from "../common/utils";
 import compareByAlph = utils.compareByAlph;
 import TeacherTaskModal from "./components/TeacherTaskModal";
+import Teacher = entities.Teacher;
+import allSuitableTeachers = entities.allSuitableTeachers;
 
 
 const PlanTasks = () => {
@@ -15,7 +17,19 @@ const PlanTasks = () => {
     const [tasks, setTasks] = useState(new Array<PlanTask>());
     const [rawData, setRawData] = useState(new Array<any>());
     const [modalVisible, setModalVisible] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [suitableTeachers, setSuitableTeachers] = useState(new Array<Teacher>());
     const [planTaskId, setPlanTaskId] = useState(-1);
+
+    function handleTeachers(response: any) {
+        setSuitableTeachers(response)
+    }
+
+    function updateSuitableTeachers(planTaskId: number) {
+        setPlanTaskId(planTaskId);
+        setSuitableTeachers(new Array<Teacher>());
+        allSuitableTeachers(planTaskId, handleTeachers);
+    }
 
     const columns = [
         {
@@ -74,25 +88,26 @@ const PlanTasks = () => {
             key: 'teacherName',
             sorter: (a: PlanTask, b: PlanTask) => compareByAlph(a.teacherName, b.teacherName),
             render: (name: string, record: PlanTask) => {
+                let onClick = () => {
+                    updateSuitableTeachers(record.key);
+                    setModalVisible(true);
+                }
                 if (typeof name == 'undefined') {
-                    let onClick = () => {
-                        setPlanTaskId(record.key);
-                        setModalVisible(true);
-                    }
                     return (
-                        <Button onClick={onClick}>Назначить</Button>
+                        <div>
+                            <Button onClick={onClick}>Назначить</Button>
+                        </div>
                     )
                 }
                 if (name.length == 0){
-                    let onClick = () => {
-                        setPlanTaskId(record.key);
-                        setModalVisible(true);
-                    }
                     return (
                         <Button onClick={onClick}>Назначить</Button>
                     )
                 }
-                return <span>{name}</span>
+                return <Space>
+                    {name}
+                    <Button onClick={onClick}>Изменить</Button>
+                </Space>
             }
         }
     ]
@@ -105,8 +120,9 @@ const PlanTasks = () => {
     }, [])
 
     function handleTasks(response: any) {
-        setTasks(response)
-        setRawData(response)
+        setLoading(false);
+        setTasks(response);
+        setRawData(response);
     }
 
     function defineClass(record: PlanTask, index: number): string {
@@ -126,11 +142,12 @@ const PlanTasks = () => {
             <Table
                 columns={columns}
                 dataSource={rawData}
+                size='small'
                 expandable={{
                     expandedRowRender: record => <p style={{margin: 0}}>{"Какой-то дополнительный контент"}</p>,
                     rowExpandable: record => record.name !== 'Not Expandable',
                 }}
-                loading={tasks.length == 0}
+                loading={loading}
                 rowClassName={defineClass}
                 // @ts-ignore
                 pagination={{position: ['none', 'bottomCenter'], pageSize: 15}}
@@ -141,11 +158,15 @@ const PlanTasks = () => {
                 footer={null}
                 centered
                 closable={false}
-                width={800}
+                width={1100}
             >
                 <TeacherTaskModal
                     setVisible={setModalVisible}
-                    update={() => allPlanTasks(handleTasks)}
+                    update={() => {
+                        setLoading(true);
+                        allPlanTasks(handleTasks);
+                    }}
+                    teachers={suitableTeachers}
                     planTaskId={planTaskId}
                 />
             </Modal>

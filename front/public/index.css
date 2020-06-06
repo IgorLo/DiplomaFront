@@ -1,9 +1,21 @@
 
 .task_without_teacher {
     background: #ffe2e2;
-    border: 1px solid black;
+    /*border: 1px solid black;*/
 }
 
 .teacherCurrentBar {
     height: 30px;
+}
+
+.teacher__overload {
+    background: #ffe2e2;
+}
+
+.teacher__notLoaded {
+    background: #fff5d9;
+}
+
+.teacher__okLoad {
+    background: #e1ffd9;
 }

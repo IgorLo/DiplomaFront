@@ -8,70 +8,101 @@ import allTeachers = entities.allTeachers;
 import PlanTask = entities.PlanTask;
 import {utils} from "../common/utils";
 import compareByAlph = utils.compareByAlph;
+import TeacherTaskModal from "./components/TeacherTaskModal";
+import allSuitableTeachers = entities.allSuitableTeachers;
 
 
 const Teachers = () => {
 
     const [teachers, setTeachers] = useState(new Array<Teacher>());
     const [rawData, setRawData] = useState(new Array<any>());
+    const [modalVisible, setModalVisible] = useState(false);
+    const [planTaskId, setPlanTaskId] = useState(-1);
+    const [suitableTeachers, setSuitableTeachers] = useState(new Array<Teacher>());
+
+    function handleSuitableTeachers(response: any) {
+        setSuitableTeachers(response)
+    }
+
+    function updateSuitableTeachers(planTaskId: number) {
+        setPlanTaskId(planTaskId);
+        setSuitableTeachers(new Array<Teacher>());
+        allSuitableTeachers(planTaskId, handleSuitableTeachers);
+    }
 
     const teacherColumns = [
         {
             title: 'Имя',
             dataIndex: 'name',
-            key: 'name'
+            key: 'name',
+            sorter: (a: Teacher, b: Teacher) => compareByAlph(a.name, b.name)
         },
         {
-            title: 'fromHours',
-            dataIndex: 'fromHours',
-            key: 'fromHours'
-        },
-        {
-            title: 'toHours',
-            dataIndex: 'toHours',
-            key: 'toHours'
-        },
-        {
-            title: 'rate',
-            dataIndex: 'rate',
-            key: 'rate'
-        },
-        {
-            title: 'schoolName',
+            title: 'Школа',
             dataIndex: 'schoolName',
-            key: 'schoolName'
+            key: 'schoolName',
+            sorter: (a: Teacher, b: Teacher) => compareByAlph(a.schoolName, b.schoolName)
         },
         {
-            title: 'currentHours',
-            dataIndex: 'currentHours',
-            key: 'currentHours'
+            title: 'Ставка',
+            dataIndex: 'rate',
+            key: 'rate',
+            sorter: (a: Teacher, b: Teacher) => a.rate - b.rate
         },
         {
-            title: 'Загрузка',
+            title: 'Мин. (ч)',
+            dataIndex: 'fromHours',
+            key: 'fromHours',
+            sorter: (a: Teacher, b: Teacher) => a.fromHours - b.fromHours,
+            width: '5%'
+        },
+        {
+            title: 'Макс. (ч)',
+            dataIndex: 'toHours',
+            key: 'toHours',
+            sorter: (a: Teacher, b: Teacher) => a.toHours - b.toHours,
+            width: '5%'
+        },
+        {
+            title: 'Текущее (ч)',
             dataIndex: 'currentHours',
             key: 'currentHours',
+            sorter: (a: Teacher, b: Teacher) => a.currentHours - b.currentHours,
+            width: '5%'
+        },
+        {
+            title: 'Загрузка (%)',
+            dataIndex: 'currentHours',
+            key: 'load',
             render: (value: number, record: Teacher) => {
                 let busyness = value / record.toHours;
+                let displayBusyness = busyness * 100;
                 let color = '#84d65e'; //green
+                let textColour = '#000000';
                 if (busyness > 1.0){
-                    busyness = 1.0
+                    busyness = 1.0;
                 }
                 if (record.currentHours < record.fromHours){
-                    color = '#f5d742' //yellow
+                    color = '#f5d742'; //yellow
                 }
                 if (record.currentHours > record.toHours){
-                    color = '#e66153' //red
+                    color = '#e66153'; //red
+                    textColour = '#FFFFFF';
                 }
                 busyness = busyness * 100;
                 return (
                     <div className="teacherCurrentBar" style={{
                         width: busyness+"%",
-                        background: color
+                        background: color,
+                        color: textColour,
+                        padding: '3px',
+                        overflow: 'hidden'
                     }}>
-
+                        <span>{Math.round(displayBusyness) + '%'}</span>
                     </div>
                 )
             },
+            sorter: (a: Teacher, b: Teacher) => (a.currentHours/a.toHours) - (b.currentHours/b.toHours),
             width: '20%'
         }
     ]
@@ -126,6 +157,19 @@ const Teachers = () => {
             dataIndex: 'planName',
             key: 'planName',
             sorter: (a: PlanTask, b: PlanTask) => compareByAlph(a.planName, b.planName)
+        },
+        {
+            title: '',
+            dataIndex: 'teacherName',
+            key: 'changeTeacher',
+            render: (value: string, record: PlanTask) => {
+                let onClick = () => {
+                    setPlanTaskId(record.key);
+                    updateSuitableTeachers(record.key);
+                    setModalVisible(true);
+                }
+                return <Button onClick={onClick}>Изменить</Button>
+            }
         }
     ]
     // const rowSelection = {
@@ -141,6 +185,16 @@ const Teachers = () => {
         setRawData(response)
     }
 
+    function defineClass(record: Teacher, index: number): string {
+        if (record.currentHours > record.toHours) {
+            return 'teacher__overload'
+        } else if (record.currentHours < record.fromHours){
+            return 'teacher__notLoaded'
+        } else {
+            return 'teacher__okLoad'
+        }
+    }
+
     return (
         <div>
             {/*<button onClick={allStudents}>Студенты</button>*/}
@@ -148,6 +202,7 @@ const Teachers = () => {
             <Table
                 columns={teacherColumns}
                 dataSource={rawData}
+                rowClassName={defineClass}
                 expandable={{
                     expandedRowRender: (record: Teacher) => {
                         return (
@@ -163,11 +218,26 @@ const Teachers = () => {
                     }
                 }}
                 bordered
+                size='small'
                 loading={teachers.length == 0}
                 // @ts-ignore
                 pagination={{position: ['none', 'bottomCenter'], pageSize: 15}}
                 // scroll={{ y: 700 }}
             />
+            <Modal
+                visible={modalVisible}
+                footer={null}
+                centered
+                closable={false}
+                width={1100}
+            >
+                <TeacherTaskModal
+                    setVisible={setModalVisible}
+                    update={() => allTeachers(handleTeachers)}
+                    teachers={suitableTeachers}
+                    planTaskId={planTaskId}
+                />
+            </Modal>
         </div>
     )
 

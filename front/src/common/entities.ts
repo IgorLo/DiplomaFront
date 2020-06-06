@@ -75,13 +75,15 @@ export module entities {
 
     export class Teacher {
 
-        constructor(key: number, name: string, fromHours: number, toHours: number, rate: number, school: entities.School, tasks: Array<entities.PlanTask>, currentHours: number, activities: Array<entities.Activity>) {
+
+        constructor(key: number, name: string, fromHours: number, toHours: number, rate: number, school: entities.School, schoolName: string, tasks: Array<entities.PlanTask>, currentHours: number, activities: Array<entities.Activity>) {
             this.key = key;
             this.name = name;
             this.fromHours = fromHours;
             this.toHours = toHours;
             this.rate = rate;
             this.school = school;
+            this.schoolName = schoolName;
             this.tasks = tasks;
             this.currentHours = currentHours;
             this.activities = activities;
@@ -93,6 +95,7 @@ export module entities {
         toHours: number;
         rate: number;
         school: School;
+        schoolName: string;
         tasks: Array<PlanTask>;
         currentHours: number;
         activities: Array<Activity>;
@@ -150,6 +153,18 @@ export module entities {
             groupIds: Array<number>()
         }
         contentOfPostRequest("/sets", JSON.stringify(data), false, handler);
+    }
+
+    export function changeTaskTeacher(taskId: number, teacherId: number, handler: Function) {
+        let data = {
+            taskId: taskId,
+            teacherId: teacherId
+        }
+        contentOfPostRequest("/changeTask", JSON.stringify(data), false, handler);
+    }
+
+    export function allSuitableTeachers(taskId: number, handler: Function) {
+        contentOfGetRequest("/suitableTeachers/" + taskId, false, handler);
     }
 
 }
