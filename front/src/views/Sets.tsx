@@ -78,8 +78,7 @@ const Sets = () => {
                 }}
                 loading={studentSets.length == 0}
                 // @ts-ignore
-                pagination={{position: ['none', 'bottomCenter']}}
-                // pagination={{ pageSize: 50 }}
+                pagination={{position: ['none', 'bottomCenter'], pageSize: 14}}
                 // scroll={{ y: 240 }}
             />
             <Button

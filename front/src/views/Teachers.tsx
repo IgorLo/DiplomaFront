@@ -1,7 +1,7 @@
 import * as React from "react";
 import {useEffect, useState} from 'react';
 import {entities} from "../common/entities";
-import {Table, Modal, Button} from "antd"
+import {Table, Modal, Button, Space} from "antd"
 import "./PlanTasks.css"
 import Teacher = entities.Teacher;
 import allTeachers = entities.allTeachers;
@@ -10,6 +10,8 @@ import {utils} from "../common/utils";
 import compareByAlph = utils.compareByAlph;
 import TeacherTaskModal from "./components/TeacherTaskModal";
 import allSuitableTeachers = entities.allSuitableTeachers;
+import {Link} from "react-router-dom";
+import changeTaskTeacher = entities.changeTaskTeacher;
 
 
 const Teachers = () => {
@@ -35,7 +37,10 @@ const Teachers = () => {
             title: 'Имя',
             dataIndex: 'name',
             key: 'name',
-            sorter: (a: Teacher, b: Teacher) => compareByAlph(a.name, b.name)
+            sorter: (a: Teacher, b: Teacher) => compareByAlph(a.name, b.name),
+            render: (value: number, record: Teacher) => {
+                return <Link to={"/teachers/" + record.key}>{value}</Link>
+            }
         },
         {
             title: 'Школа',
@@ -79,20 +84,20 @@ const Teachers = () => {
                 let displayBusyness = busyness * 100;
                 let color = '#84d65e'; //green
                 let textColour = '#000000';
-                if (busyness > 1.0){
+                if (busyness > 1.0) {
                     busyness = 1.0;
                 }
-                if (record.currentHours < record.fromHours){
+                if (record.currentHours < record.fromHours) {
                     color = '#f5d742'; //yellow
                 }
-                if (record.currentHours > record.toHours){
+                if (record.currentHours > record.toHours) {
                     color = '#e66153'; //red
                     textColour = '#FFFFFF';
                 }
                 busyness = busyness * 100;
                 return (
                     <div className="teacherCurrentBar" style={{
-                        width: busyness+"%",
+                        width: busyness + "%",
                         background: color,
                         color: textColour,
                         padding: '3px',
@@ -102,7 +107,7 @@ const Teachers = () => {
                     </div>
                 )
             },
-            sorter: (a: Teacher, b: Teacher) => (a.currentHours/a.toHours) - (b.currentHours/b.toHours),
+            sorter: (a: Teacher, b: Teacher) => (a.currentHours / a.toHours) - (b.currentHours / b.toHours),
             width: '20%'
         }
     ]
@@ -168,7 +173,15 @@ const Teachers = () => {
                     updateSuitableTeachers(record.key);
                     setModalVisible(true);
                 }
-                return <Button onClick={onClick}>Изменить</Button>
+                let dropTeacher = () => {
+                    changeTaskTeacher(record.key, -1, () => {
+                        allTeachers(handleTeachers);
+                    });
+                }
+                return <Space>
+                    <Button onClick={onClick}>Изменить</Button>
+                    <Button danger={true} onClick={dropTeacher}>Убрать</Button>
+                </Space>
             }
         }
     ]
@@ -188,7 +201,7 @@ const Teachers = () => {
     function defineClass(record: Teacher, index: number): string {
         if (record.currentHours > record.toHours) {
             return 'teacher__overload'
-        } else if (record.currentHours < record.fromHours){
+        } else if (record.currentHours < record.fromHours) {
             return 'teacher__notLoaded'
         } else {
             return 'teacher__okLoad'
@@ -221,7 +234,7 @@ const Teachers = () => {
                 size='small'
                 loading={teachers.length == 0}
                 // @ts-ignore
-                pagination={{position: ['none', 'bottomCenter'], pageSize: 15}}
+                pagination={{position: ['none', 'bottomCenter'], pageSize: 17}}
                 // scroll={{ y: 700 }}
             />
             <Modal

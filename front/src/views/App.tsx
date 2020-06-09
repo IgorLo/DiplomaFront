@@ -4,54 +4,57 @@ import {
     BrowserRouter as Router,
     Switch,
     Route,
-    Link
+    Link,
+    useRouteMatch
 } from "react-router-dom";
 import './App.css';
 import Students from "./Students";
 import Sets from "./Sets";
 import PlanTasks from "./PlanTasks";
 import Teachers from "./Teachers";
+import TeacherPage from "./TeacherPage";
+import { Avatar } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
+import Plans from "./Plans";
+import PlanPage from "./PlanPage";
 
 const App = () => {
 
     return (
         <Router>
             <div>
-                <nav>
-                    <ul>
-                        <li>
-                            <Link to="/">Главная</Link>
-                        </li>
-                        <li>
-                            <Link to="/teachers">Преподаватели</Link>
-                        </li>
-                        <li>
-                            <Link to="/sets">Множества</Link>
-                        </li>
-                    </ul>
-                </nav>
+                <header>
+                    <img className="logo" src="https://www.spbstu.ru/local/templates/main/img/logo.png"
+                         alt="Логотип политеха"/>
+                    <Link className="navigation_link" to="/">Главная</Link>
+                    <Link className="navigation_link" to="/teachers">Преподаватели</Link>
+                    <Link className="navigation_link" to="/sets">Множества</Link>
+                    <Link className="navigation_link" to="/plans">Планы</Link>
+                    <div className="sign_out_container">
+                        <div className="logged_bar">
+                            <Avatar size={64} icon={<UserOutlined />} />
+                            <span>Лопатинский И.С.</span>
+                        </div>
+                        <Link className="navigation_link" to="/">Выход</Link>
+                    </div>
+                </header>
 
                 {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
-                <Switch>
-                    <Route path="/teachers">
-                        <Teachers />
-                    </Route>
-                    <Route path="/sets">
-                        <Sets/>
-                    </Route>
-                    <Route path="/">
-                        <Main />
-                    </Route>
-                </Switch>
+                <div className="main_content_container">
+                    <Switch>
+                        <Route exact path="/teachers" component={Teachers}/>
+                        <Route path="/teachers/:id" component={TeacherPage}/>
+                        <Route exact path="/sets" component={Sets}/>
+                        <Route exact path="/" component={PlanTasks}/>
+                        <Route exact path="/plans" component={Plans}/>
+                        <Route path="/plans/:id" component={PlanPage}/>
+                    </Switch>
+                </div>
             </div>
         </Router>
     );
 
 };
-
-function Main() {
-    return <PlanTasks/>;
-}
 
 ReactDOM.render(<App/>, document.getElementById("root"))

@@ -69,12 +69,12 @@ export module entities {
             this.key = key;
             this.name = name;
         }
+
         key: number;
         name: string;
     }
 
     export class Teacher {
-
 
         constructor(key: number, name: string, fromHours: number, toHours: number, rate: number, school: entities.School, schoolName: string, tasks: Array<entities.PlanTask>, currentHours: number, activities: Array<entities.Activity>) {
             this.key = key;
@@ -114,6 +114,7 @@ export module entities {
             this.teacherName = teacherName;
             this.teacherId = teacherId;
         }
+
         key: number;
         activityType: string;
         discipline: string;
@@ -124,6 +125,25 @@ export module entities {
         planName: string;
         teacherName: string;
         teacherId: number;
+    }
+
+    export class Plan {
+
+        constructor(schoolName: string, key: number, name: string, tasks: Array<entities.PlanTask>, totalHours: number, currentHours: number) {
+            this.schoolName = schoolName;
+            this.key = key;
+            this.name = name;
+            this.tasks = tasks;
+            this.totalHours = totalHours;
+            this.currentHours = currentHours;
+        }
+
+        schoolName: string;
+        key: number;
+        name: string;
+        tasks: Array<PlanTask>;
+        totalHours: number;
+        currentHours: number;
     }
 
     export function allStudents(handler: Function) {
@@ -146,6 +166,18 @@ export module entities {
         contentOfGetRequest("/teachers", false, handler)
     }
 
+    export function allPlans(handler: Function) {
+        contentOfGetRequest("/plans", false, handler)
+    }
+
+    export function planById(handler: Function, id: number) {
+        contentOfGetRequest("/plans/" + id.toString(), false, handler);
+    }
+
+    export function teacherById(handler: Function, id: number) {
+        contentOfGetRequest("/teachers/" + id.toString(), false, handler);
+    }
+
     export function createNewSet(name: string, studentIds: Array<number>, handler: Function) {
         let data = {
             name: name,
@@ -165,6 +197,10 @@ export module entities {
 
     export function allSuitableTeachers(taskId: number, handler: Function) {
         contentOfGetRequest("/suitableTeachers/" + taskId, false, handler);
+    }
+
+    export function allPossibleTasks(teacherId: number, handler: Function) {
+        contentOfGetRequest("/possibleTasks/" + teacherId, false, handler);
     }
 
 }

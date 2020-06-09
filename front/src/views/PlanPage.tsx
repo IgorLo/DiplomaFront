@@ -1,23 +1,24 @@
-import * as React from "react";
-import {useEffect, useState} from 'react';
-import {entities} from "../common/entities";
-import {Table, Modal, Button, Space} from "antd"
-import PlanTask = entities.PlanTask;
-import allPlanTasks = entities.allPlanTasks;
-import "./PlanTasks.css"
-import {utils} from "../common/utils";
-import compareByAlph = utils.compareByAlph;
+import * as React from 'react';
+import { useParams, Link } from 'react-router-dom';
 import TeacherTaskModal from "./components/TeacherTaskModal";
+import { useState, useEffect } from 'react';
+import {entities} from "../common/entities";
 import Teacher = entities.Teacher;
 import allSuitableTeachers = entities.allSuitableTeachers;
+import PlanTask = entities.PlanTask;
+import {utils} from "../common/utils";
+import compareByAlph = utils.compareByAlph;
 import changeTaskTeacher = entities.changeTaskTeacher;
-import { Link } from "react-router-dom";
+import planById = entities.planById;
+import { Button, Space, Table, Modal } from 'antd';
+import Plan = entities.Plan;
 
 
-const PlanTasks = () => {
+const PlanPage = () => {
 
-    const [tasks, setTasks] = useState(new Array<PlanTask>());
-    const [rawData, setRawData] = useState(new Array<any>());
+    let { id } = useParams();
+
+    const [plan, setPlan] = useState<Plan>();
     const [modalVisible, setModalVisible] = useState(false);
     const [loading, setLoading] = useState(true);
     const [suitableTeachers, setSuitableTeachers] = useState(new Array<Teacher>());
@@ -79,12 +80,6 @@ const PlanTasks = () => {
             sorter: (a: PlanTask, b: PlanTask) => a.hours - b.hours
         },
         {
-            title: 'План',
-            dataIndex: 'planName',
-            key: 'planName',
-            sorter: (a: PlanTask, b: PlanTask) => compareByAlph(a.planName, b.planName)
-        },
-        {
             title: 'Преподаватель',
             dataIndex: 'teacherName',
             key: 'teacherName',
@@ -114,7 +109,7 @@ const PlanTasks = () => {
                 let dropTeacher = () => {
                     setLoading(true);
                     changeTaskTeacher(record.key, -1, () => {
-                        allPlanTasks(handleTasks);
+                        planById(handlePlan, id);
                     });
                 }
                 if (typeof name == 'undefined') {
@@ -141,13 +136,12 @@ const PlanTasks = () => {
     // }
 
     useEffect(() => {
-        allPlanTasks(handleTasks)
+        planById(handlePlan, id)
     }, [])
 
-    function handleTasks(response: any) {
+    function handlePlan(response: any) {
         setLoading(false);
-        setTasks(response);
-        setRawData(response);
+        setPlan(response);
     }
 
     function defineClass(record: PlanTask, index: number): string {
@@ -162,11 +156,16 @@ const PlanTasks = () => {
 
     return (
         <div>
+            <h2>{
+                (typeof plan == 'undefined') ? "" : plan.name
+            }</h2>
             {/*<button onClick={allStudents}>Студенты</button>*/}
             {/*<Table rowSelection={rowSelection} columns={columns} dataSource={rawData}/>*/}
             <Table
                 columns={columns}
-                dataSource={rawData}
+                dataSource={
+                    (typeof plan == 'undefined') ? [] : plan.tasks
+                }
                 bordered
                 size='small'
                 loading={loading}
@@ -186,7 +185,7 @@ const PlanTasks = () => {
                     setVisible={setModalVisible}
                     update={() => {
                         setLoading(true);
-                        allPlanTasks(handleTasks);
+                        planById(handlePlan, id);
                     }}
                     teachers={suitableTeachers}
                     planTaskId={planTaskId}
@@ -197,5 +196,4 @@ const PlanTasks = () => {
 
 }
 
-export default PlanTasks;
-
+export default PlanPage;

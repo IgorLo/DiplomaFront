@@ -1,11 +1,102 @@
+/*table tr:nth-child(2n) td {*/
+/*    filter: hue-rotate(3deg);*/
+/*}*/
 
 .task_without_teacher {
     background: #ffe2e2;
     /*border: 1px solid black;*/
 }
 
+.main_content_container {
+    padding: 95px 15px 15px;
+    height: 100%;
+}
+
+table {
+    /*border: #eaeaea 1px solid;*/
+}
+
+.sign_out_container {
+    display: inline-block;
+    position: absolute;
+    /*top: -5px;*/
+    right: 0;
+}
+
+.sign_out_container > span {
+    /*margin: -5px 5px 0 5px;*/
+}
+
+.logged_bar {
+    color: white;
+    display: inline-block;
+    padding: 12px;
+    height: 80px;
+    font-size: 14pt;
+    /*height: 100%;*/
+}
+
+.logged_bar:hover {
+    cursor: pointer;
+    background: #09ad09;
+}
+
+span.ant-avatar {
+    margin-right: 5px;
+    margin-top: -4px;
+}
+
+header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    padding: 0;
+    background: green;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.logo {
+    position: relative;
+    top: -4px;
+    display: inline-flex;
+    max-height: 80px;
+    width: auto;
+    align-self: center;
+    margin: 0 4px 0 0;
+}
+
+.navigation_link {
+    /*display: none;*/
+    background: none;
+    display: inline-flex;
+    height: 80px;
+    padding: 21px 15px;
+    font-size: 16pt;
+    color: white;
+    text-align: center;
+    transition: all 0.5s;
+}
+
+.navigation_link:hover {
+    background: #09ad09;
+    color: #ffffff;
+}
+
 .teacherCurrentBar {
     height: 30px;
+}
+
+.planCurrentBar {
+    height: 30px;
+}
+
+.teacherCard {
+    margin-bottom: 15px;
 }
 
 .teacher__overload {
@@ -19,3 +110,5 @@
 .teacher__okLoad {
     background: #e1ffd9;
 }
+
+
