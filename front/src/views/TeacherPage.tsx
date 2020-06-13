@@ -197,21 +197,9 @@ const TeacherPage = () => {
             width: '10%',
             render: (name: string, record: PlanTask) => {
                 let onClick = () => {
-                    changeTaskTeacher(record.key, id, () => {
+                    changeTaskTeacher(record.key, parseInt(id, 10), () => {
                         update();
                     })
-                }
-                if (typeof name == 'undefined') {
-                    return (
-                        <div>
-                            <Button type="primary" onClick={onClick}>Назначить</Button>
-                        </div>
-                    )
-                }
-                if (name.length == 0) {
-                    return (
-                        <Button type="primary" onClick={onClick}>Назначить</Button>
-                    )
                 }
                 return <Button type="primary" onClick={onClick}>Назначить</Button>
             }
