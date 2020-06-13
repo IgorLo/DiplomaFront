@@ -111,4 +111,14 @@ header {
     background: #e1ffd9;
 }
 
+.new_set_buttons_div {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.new_set_addNewButton_div {
+    display: flex;
+    justify-content: center;
+}
+
 

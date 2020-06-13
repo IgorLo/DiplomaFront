@@ -81,12 +81,15 @@ const Sets = () => {
                 pagination={{position: ['none', 'bottomCenter'], pageSize: 14}}
                 // scroll={{ y: 240 }}
             />
-            <Button
-                type="primary"
-                icon={<PlusOutlined/>}
-                onClick={() => setModalVisible(true)}>
-                Создать новое
-            </Button>
+            <div className="new_set_addNewButton_div">
+                <Button
+                    type="primary"
+                    icon={<PlusOutlined/>}
+                    size="large"
+                    onClick={() => setModalVisible(true)}>
+                    Создать новое
+                </Button>
+            </div>
 
             <Modal
                 visible={modalVisible}

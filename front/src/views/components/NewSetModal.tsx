@@ -96,24 +96,27 @@ const NewSetModal = (props: any) => {
                 height={450}
                 style={{height: 450, marginBottom: 8}}
             />
-            <Button
-                type="primary"
-                danger={true}
-                onClick={() => {
-                    props.setVisible(false);
-                    props.update();
-                }}>
-                Закрыть
-            </Button>
-            <Space direction="horizontal" size="small"/>
-            <Button
-                type="primary"
-                disabled={checkedKeys.length == 0 || setName.length == 0}
-                onClick={() => {
-                    createNewSet(setName, checkedKeys, newSetHandler);
-                }}>
-                Создать
-            </Button>
+            <div className="new_set_buttons_div">
+                <Space direction="horizontal" size="small">
+                    <Button
+                        type="primary"
+                        danger={true}
+                        onClick={() => {
+                            props.setVisible(false);
+                            props.update();
+                        }}>
+                        Закрыть
+                    </Button>
+                    <Button
+                        type="primary"
+                        disabled={checkedKeys.length == 0 || setName.length == 0}
+                        onClick={() => {
+                            createNewSet(setName, checkedKeys, newSetHandler);
+                        }}>
+                        Создать
+                    </Button>
+                </Space>
+            </div>
         </div>
     )
 
