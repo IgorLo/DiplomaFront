@@ -13,6 +13,7 @@ import TeacherTaskModal from "./components/TeacherTaskModal";
 import allSuitableTeachers = entities.allSuitableTeachers;
 import changeTaskTeacher = entities.changeTaskTeacher;
 import allPossibleTasks = entities.allPossibleTasks;
+import Activity = entities.Activity;
 
 const { Panel } = Collapse;
 
@@ -55,6 +56,27 @@ const TeacherPage = () => {
     function handleTeacher(response: any) {
         setTeacher(response);
     }
+
+    const activitiesColumns = [
+        {
+            title: 'Название предмета',
+            dataIndex: 'discipline',
+            key: 'discipline',
+            sorter: (a: Activity, b: Activity) => compareByAlph(a.subjectName, b.subjectName),
+            render: (value: any, record: Activity) => {
+                return <span>{record.subjectName.toString()}</span>
+            }
+        },
+        {
+            title: 'Вид работ',
+            dataIndex: 'activityType',
+            key: 'activityType',
+            sorter: (a: Activity, b: Activity) => compareByAlph(a.activityType, b.activityType),
+            render: (value: any, record: Activity) => {
+                return <span>{record.activityType.toString()}</span>
+            }
+        }
+    ]
 
     const firstTasksColumns = [
         {
@@ -316,31 +338,35 @@ const TeacherPage = () => {
                 </div>
                 <Collapse>
                     <Panel header="Общая информация" key="1">
+                        <h2>Загруженность</h2>
                         <Table
                             columns={teacherColumns}
                             dataSource={[teacher]}
                             rowClassName={defineClass}
-                            // expandable={{
-                            //     expandedRowRender: (record: Teacher) => {
-                            //         return (
-                            //             <Table
-                            //                 columns={tasksColumns}
-                            //                 style={{margin: 0}}
-                            //                 dataSource={record.tasks}
-                            //                 bordered
-                            //                 pagination={false}
-                            //                 size="small"
-                            //             />
-                            //         )
-                            //     }
-                            // }}
                             bordered
                             size='small'
                             loading={false}
                             // @ts-ignore
-                            pagination={null}
+                            pagination={false}
+                            style={{
+                                marginBottom: "10px"
+                            }}
                             // scroll={{ y: 700 }}
                         />
+                        <Collapse>
+                            <Panel header="Возможные работы" key="4">
+                                <Table
+                                    columns={activitiesColumns}
+                                    dataSource={teacher.activities}
+                                    bordered
+                                    size='small'
+                                    // scroll={{ y: 300 }}
+                                    // @ts-ignore
+                                    pagination={{position: ['none', 'bottomCenter'], pageSize: 8}}
+                                />
+                            </Panel>
+                        </Collapse>
+
                     </Panel>
                     <Panel header="Назначенные занятия" key="2">
                         <Table
@@ -350,7 +376,7 @@ const TeacherPage = () => {
                             size='small'
                             rowClassName={defineTaskClass}
                             // @ts-ignore
-                            pagination={{position: ['none', 'bottomCenter'], pageSize: 17}}
+                            pagination={false}
                             // scroll={{ y: 700 }}
                         />
                     </Panel>
@@ -362,7 +388,7 @@ const TeacherPage = () => {
                             size='small'
                             rowClassName={defineTaskClass}
                             // @ts-ignore
-                            pagination={{position: ['none', 'bottomCenter'], pageSize: 17}}
+                            pagination={false}
                             // scroll={{ y: 700 }}
                         />
                     </Panel>

@@ -179,7 +179,7 @@ const TeacherTaskModal = (props: any) => {
             />
             <Table
                 columns={teacherColumns}
-                dataSource={props.teachers}
+                dataSource={props.teachers.filter((teacher: Teacher) => teacher.name.includes(searchValue))}
                 expandable={{
                     expandedRowRender: (record: Teacher) => {
                         return (

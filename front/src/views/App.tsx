@@ -20,6 +20,10 @@ import PlanPage from "./PlanPage";
 
 const App = () => {
 
+    const Logout = () => {
+        return <h1>Logout</h1>
+    }
+
     return (
         <Router>
             <div>
@@ -35,7 +39,7 @@ const App = () => {
                             <Avatar size={64} icon={<UserOutlined />} />
                             <span>Лопатинский И.С.</span>
                         </div>
-                        <Link className="navigation_link" to="/">Выход</Link>
+                        <Link className="navigation_link" to="/logout">Выход</Link>
                     </div>
                 </header>
 
@@ -49,6 +53,7 @@ const App = () => {
                         <Route exact path="/" component={PlanTasks}/>
                         <Route exact path="/plans" component={Plans}/>
                         <Route path="/plans/:id" component={PlanPage}/>
+                        <Route exact path="/logout" component={Logout}/>
                     </Switch>
                 </div>
             </div>
