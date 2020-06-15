@@ -1,7 +1,7 @@
 import * as React from "react";
 import {useEffect, useState} from 'react';
 import {entities} from "../common/entities";
-import {Table, Modal, Button, Space} from "antd"
+import {Table, Modal, Button, Space, Input} from "antd"
 import "./PlanTasks.css"
 import Teacher = entities.Teacher;
 import allTeachers = entities.allTeachers;
@@ -12,6 +12,7 @@ import TeacherTaskModal from "./components/TeacherTaskModal";
 import allSuitableTeachers = entities.allSuitableTeachers;
 import {Link} from "react-router-dom";
 import changeTaskTeacher = entities.changeTaskTeacher;
+import { SearchOutlined } from "@ant-design/icons";
 
 
 const Teachers = () => {
@@ -32,6 +33,64 @@ const Teachers = () => {
         allSuitableTeachers(planTaskId, handleSuitableTeachers);
     }
 
+    const [searchText, setSearchText] = useState("");
+    const [searchedColumn, setSearchedColumn] = useState("");
+
+    //@ts-ignore
+    const handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        setSearchText(selectedKeys[0]);
+        setSearchedColumn(dataIndex);
+    };
+
+    //@ts-ignore
+    const handleReset = clearFilters => {
+        clearFilters();
+        setSearchText('');
+    };
+
+    const getColumnSearchProps = (dataIndex: any) => ({
+        //@ts-ignore
+        filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
+            <div style={{padding: 8}}>
+                <Input
+                    ref={node => {
+                        //@ts-ignore
+                        this.searchInput = node;
+                    }}
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    style={{width: 188, marginBottom: 8, display: 'block'}}
+                />
+                <Space>
+                    <Button
+                        type="primary"
+                        onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                        icon={<SearchOutlined/>}
+                        size="small"
+                        style={{width: 90}}
+                    >
+                        Поиск
+                    </Button>
+                    <Button onClick={() => handleReset(clearFilters)} size="small" style={{width: 90}}>
+                        Сбросить
+                    </Button>
+                </Space>
+            </div>
+        ),
+        filterIcon: (filtered: any) => <SearchOutlined style={{color: filtered ? '#1890ff' : undefined}}/>,
+        onFilter: (value: string, record: any) =>
+            record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+        onFilterDropdownVisibleChange: (visible: any) => {
+            if (visible) {
+                //@ts-ignore
+                setTimeout(() => this.searchInput.select());
+            }
+        }
+    });
+
     const teacherColumns = [
         {
             title: 'Имя',
@@ -40,13 +99,15 @@ const Teachers = () => {
             sorter: (a: Teacher, b: Teacher) => compareByAlph(a.name, b.name),
             render: (value: number, record: Teacher) => {
                 return <Link to={"/teachers/" + record.key}>{value}</Link>
-            }
+            },
+            ...getColumnSearchProps('name')
         },
         {
-            title: 'Школа',
+            title: 'Подразделение',
             dataIndex: 'schoolName',
             key: 'schoolName',
-            sorter: (a: Teacher, b: Teacher) => compareByAlph(a.schoolName, b.schoolName)
+            sorter: (a: Teacher, b: Teacher) => compareByAlph(a.schoolName, b.schoolName),
+            ...getColumnSearchProps('schoolName')
         },
         {
             title: 'Ставка',

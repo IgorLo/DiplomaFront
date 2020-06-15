@@ -82,7 +82,8 @@ header {
     transition: all 0.5s;
 }
 
-.navigation_link:hover {
+.navigation_link:hover,
+.navigation_selected {
     background: #09ad09;
     color: #ffffff;
 }

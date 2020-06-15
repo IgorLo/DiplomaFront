@@ -1,7 +1,7 @@
 import * as React from "react";
 import {useEffect, useState} from 'react';
 import {entities} from "../common/entities";
-import {Table, Modal, Button, Space} from "antd"
+import {Table, Modal, Button, Space, Input} from "antd"
 import PlanTask = entities.PlanTask;
 import allPlanTasks = entities.allPlanTasks;
 import "./PlanTasks.css"
@@ -12,6 +12,7 @@ import Teacher = entities.Teacher;
 import allSuitableTeachers = entities.allSuitableTeachers;
 import changeTaskTeacher = entities.changeTaskTeacher;
 import { Link } from "react-router-dom";
+import { SearchOutlined } from "@ant-design/icons";
 
 
 const PlanTasks = () => {
@@ -33,12 +34,78 @@ const PlanTasks = () => {
         allSuitableTeachers(planTaskId, handleTeachers);
     }
 
+    const [searchText, setSearchText] = useState("");
+    const [searchedColumn, setSearchedColumn] = useState("");
+
+    //@ts-ignore
+    const handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        setSearchText(selectedKeys[0]);
+        setSearchedColumn(dataIndex);
+    };
+
+    //@ts-ignore
+    const handleReset = clearFilters => {
+        clearFilters();
+        setSearchText('');
+    };
+
+    const getColumnSearchProps = (dataIndex: any) => ({
+        //@ts-ignore
+        filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
+            <div style={{padding: 8}}>
+                <Input
+                    ref={node => {
+                        //@ts-ignore
+                        this.searchInput = node;
+                    }}
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    style={{width: 188, marginBottom: 8, display: 'block'}}
+                />
+                <Space>
+                    <Button
+                        type="primary"
+                        onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                        icon={<SearchOutlined/>}
+                        size="small"
+                        style={{width: 90}}
+                    >
+                        Поиск
+                    </Button>
+                    <Button onClick={() => handleReset(clearFilters)} size="small" style={{width: 90}}>
+                        Сбросить
+                    </Button>
+                </Space>
+            </div>
+        ),
+        filterIcon: (filtered: any) => <SearchOutlined style={{color: filtered ? '#1890ff' : undefined}}/>,
+        onFilter: (value: string, record: any) =>
+            record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+        onFilterDropdownVisibleChange: (visible: any) => {
+            if (visible) {
+                //@ts-ignore
+                setTimeout(() => this.searchInput.select());
+            }
+        }
+    });
+
     const columns = [
+        {
+            title: 'План',
+            dataIndex: 'planName',
+            key: 'planName',
+            sorter: (a: PlanTask, b: PlanTask) => compareByAlph(a.planName, b.planName),
+            ...getColumnSearchProps('planName')
+        },
         {
             title: 'Дисциплина',
             dataIndex: 'discipline',
             key: 'discipline',
-            sorter: (a: PlanTask, b: PlanTask) => compareByAlph(a.discipline, b.discipline)
+            sorter: (a: PlanTask, b: PlanTask) => compareByAlph(a.discipline, b.discipline),
+            ...getColumnSearchProps('discipline')
         },
         {
             title: 'Вид работ',
@@ -67,7 +134,7 @@ const PlanTasks = () => {
             sorter: (a: PlanTask, b: PlanTask) => compareByAlph(a.activityType, b.activityType)
         },
         {
-            title: 'Множество',
+            title: 'Группирование',
             dataIndex: 'groupName',
             key: 'groupName',
             sorter: (a: PlanTask, b: PlanTask) => compareByAlph(a.groupName, b.groupName)
@@ -77,12 +144,6 @@ const PlanTasks = () => {
             dataIndex: 'hours',
             key: 'hours',
             sorter: (a: PlanTask, b: PlanTask) => a.hours - b.hours
-        },
-        {
-            title: 'План',
-            dataIndex: 'planName',
-            key: 'planName',
-            sorter: (a: PlanTask, b: PlanTask) => compareByAlph(a.planName, b.planName)
         },
         {
             title: 'Преподаватель',
@@ -99,7 +160,8 @@ const PlanTasks = () => {
                 return <div>
                     <Link to={"/teachers/" + record.teacherId}>{name}</Link>
                 </div>
-            }
+            },
+            ...getColumnSearchProps('teacherName')
         },
         {
             title: '',

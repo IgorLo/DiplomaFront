@@ -129,7 +129,8 @@ export module entities {
 
     export class Plan {
 
-        constructor(schoolName: string, key: number, name: string, tasks: Array<entities.PlanTask>, totalHours: number, currentHours: number) {
+        constructor(spec: string, schoolName: string, key: number, name: string, tasks: Array<entities.PlanTask>, totalHours: number, currentHours: number) {
+            this.spec = spec;
             this.schoolName = schoolName;
             this.key = key;
             this.name = name;
@@ -138,6 +139,7 @@ export module entities {
             this.currentHours = currentHours;
         }
 
+        spec: string;
         schoolName: string;
         key: number;
         name: string;

@@ -17,8 +17,11 @@ import { Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Plans from "./Plans";
 import PlanPage from "./PlanPage";
+import { useState } from 'react';
 
 const App = () => {
+
+    const [current, setCurrent] = useState("Main");
 
     const Logout = () => {
         return <h1>Logout</h1>
@@ -30,10 +33,30 @@ const App = () => {
                 <header>
                     <img className="logo" src="https://www.spbstu.ru/local/templates/main/img/logo.png"
                          alt="Логотип политеха"/>
-                    <Link className="navigation_link" to="/">Главная</Link>
-                    <Link className="navigation_link" to="/teachers">Преподаватели</Link>
-                    <Link className="navigation_link" to="/sets">Множества</Link>
-                    <Link className="navigation_link" to="/plans">Планы</Link>
+                    <Link
+                        className={"navigation_link " + (current == "Main" ? 'navigation_selected' : '')}
+                        to="/"
+                        onClick={() => setCurrent("Main")}>
+                        Главная
+                    </Link>
+                    <Link
+                        className={"navigation_link " + (current == "Teachers" ? 'navigation_selected' : '')}
+                        to="/teachers"
+                        onClick={() => setCurrent("Teachers")}>
+                        Преподаватели
+                    </Link>
+                    <Link
+                        className={"navigation_link " + (current == "Students" ? 'navigation_selected' : '')}
+                        to="/sets"
+                        onClick={() => setCurrent("Students")}>
+                        Группирования студентов
+                    </Link>
+                    <Link
+                        className={"navigation_link " + (current == "Plans" ? 'navigation_selected' : '')}
+                        to="/plans"
+                        onClick={() => setCurrent("Plans")}>
+                        Планы
+                    </Link>
                     <div className="sign_out_container">
                         <div className="logged_bar">
                             <Avatar size={64} icon={<UserOutlined />} />

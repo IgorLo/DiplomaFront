@@ -73,7 +73,7 @@ const NewSetModal = (props: any) => {
 
     return (
         <div>
-            <h2>Новое множество</h2>
+            <h2>Новое группирование</h2>
             <Input
                 placeholder="Название"
                 size="large"

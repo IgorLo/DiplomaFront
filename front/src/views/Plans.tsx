@@ -1,15 +1,16 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 import {entities} from "../common/entities";
 import Plan = entities.Plan;
 import allPlans = entities.allPlans;
 import TeacherTaskModal from "./components/TeacherTaskModal";
-import { Table } from 'antd';
+import {Table, Space, Input, Button} from 'antd';
 import {utils} from "../common/utils";
 import compareByAlph = utils.compareByAlph;
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import PlanTask = entities.PlanTask;
-
+import Highlighter from 'react-highlight-words';
+import {SearchOutlined} from '@ant-design/icons';
 
 const Plans = () => {
 
@@ -25,6 +26,64 @@ const Plans = () => {
         allPlans(handlePlans)
     }, [])
 
+    const [searchText, setSearchText] = useState("");
+    const [searchedColumn, setSearchedColumn] = useState("");
+
+    //@ts-ignore
+    const handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        setSearchText(selectedKeys[0]);
+        setSearchedColumn(dataIndex);
+    };
+
+    //@ts-ignore
+    const handleReset = clearFilters => {
+        clearFilters();
+        setSearchText('');
+    };
+
+    const getColumnSearchProps = (dataIndex: any) => ({
+        //@ts-ignore
+        filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
+            <div style={{padding: 8}}>
+                <Input
+                    ref={node => {
+                        //@ts-ignore
+                        this.searchInput = node;
+                    }}
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    style={{width: 188, marginBottom: 8, display: 'block'}}
+                />
+                <Space>
+                    <Button
+                        type="primary"
+                        onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                        icon={<SearchOutlined/>}
+                        size="small"
+                        style={{width: 90}}
+                    >
+                        Поиск
+                    </Button>
+                    <Button onClick={() => handleReset(clearFilters)} size="small" style={{width: 90}}>
+                        Сбросить
+                    </Button>
+                </Space>
+            </div>
+        ),
+        filterIcon: (filtered: any) => <SearchOutlined style={{color: filtered ? '#1890ff' : undefined}}/>,
+        onFilter: (value: string, record: any) =>
+            record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+        onFilterDropdownVisibleChange: (visible: any) => {
+            if (visible) {
+                //@ts-ignore
+                setTimeout(() => this.searchInput.select());
+            }
+        }
+    });
+
     const planColumns = [
         {
             title: 'Имя',
@@ -34,20 +93,29 @@ const Plans = () => {
             render: (value: number, record: Plan) => {
                 return <Link
                     to={"/plans/" + record.key}
-                    style ={{
+                    style={{
                         fontSize: '12pt'
                     }}
                 >
                     {value}
                 </Link>
             },
-            width: '10%'
+            width: '10%',
+            ...getColumnSearchProps('name')
         },
         {
-            title: 'Школа',
+            title: 'Подразделение',
             dataIndex: 'schoolName',
             key: 'schoolName',
-            sorter: (a: Plan, b: Plan) => compareByAlph(a.schoolName, b.schoolName)
+            sorter: (a: Plan, b: Plan) => compareByAlph(a.schoolName, b.schoolName),
+            ...getColumnSearchProps('schoolName')
+        },
+        {
+            title: 'Направление',
+            dataIndex: 'spec',
+            key: 'spec',
+            sorter: (a: Plan, b: Plan) => compareByAlph(a.spec, b.spec),
+            ...getColumnSearchProps('spec')
         },
         {
             title: 'Назначений',
