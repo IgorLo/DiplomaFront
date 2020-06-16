@@ -40,15 +40,16 @@ export module entities {
     }
 
     export class StudentSet {
-        constructor(key: number, name: string, students: Array<entities.Student>) {
+        constructor(key: number, name: string, students: Array<entities.Student>, groupNames: string) {
             this.key = key;
             this.name = name;
             this.students = students;
+            this.groupNames = groupNames;
         }
-
         key: number;
         name: string;
         students: Array<Student>;
+        groupNames: string;
     }
 
     export class Activity {
